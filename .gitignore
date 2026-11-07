@@ -3,6 +3,7 @@
 venv/
 build/
 dist/
+macos/JARVIS.iconset/
 __pycache__/
 *.py[cod]
 .env
