@@ -39,10 +39,13 @@ from PyQt6.QtWidgets import (
 # Mark 52 and 53 shipped showing "PROTOCOL XLIX" — the number from Mark 49 — and
 # Mark 55 shipped titled "MARK 54". Deriving the protocol from the name means a
 # release bump is this one line.
-APP_VERSION  = "MARK LIII"
-APP_PROTOCOL = APP_VERSION.split()[-1]
+APP_VERSION  = "TANIA"
+APP_PROTOCOL = "LIII"
 
 def _base_dir() -> Path:
+    if sys.platform == "darwin" and getattr(sys, "frozen", False):
+        app_name = Path(sys.executable).resolve().parents[2].stem
+        return Path.home() / "Library" / "Application Support" / app_name
     if getattr(sys, "frozen", False):
         return Path(sys.executable).parent
     return Path(__file__).resolve().parent
@@ -2761,7 +2764,7 @@ class MainWindow(QMainWindow):
         if _ui_color and _ui_color.lower() != DEFAULT_UI_COLOR:
             apply_ui_accent(_ui_color)
 
-        self.setWindowTitle(f"{_display} — {APP_VERSION}")
+        self.setWindowTitle(f"{APP_VERSION} — {_display}")
         self.setMinimumSize(_MIN_W, _MIN_H)
         self.resize(_DEFAULT_W, _DEFAULT_H)
 
@@ -4271,7 +4274,7 @@ class MainWindow(QMainWindow):
         """Update all name/theme-dependent UI elements and persist to config."""
         self._assistant_name = name.strip() or "JARVIS"
         display = self._assistant_name.upper()
-        self.setWindowTitle(f"{display} — {APP_VERSION}")
+        self.setWindowTitle(f"{APP_VERSION} — {display}")
         self._title_lbl.setText(display)
         if display in ("JARVIS", "J.A.R.V.I.S"):
             self._sub_lbl.setText("Just A Rather Very Intelligent System")

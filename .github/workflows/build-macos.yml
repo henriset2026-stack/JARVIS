@@ -1,0 +1,31 @@
+name: Build JARVIS macOS
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "jarvis-v*"
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: |
+          chmod +x macos/*.sh
+          ./macos/build_mac.sh
+      - name: Verify
+        run: |
+          test -d dist/JARVIS.app
+          /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" dist/JARVIS.app/Contents/Info.plist
+          codesign --verify --deep --strict --verbose=2 dist/JARVIS.app || true
+      - name: Zip
+        run: ditto -c -k --sequesterRsrc --keepParent dist/JARVIS.app JARVIS-macOS-arm64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: JARVIS-macOS-arm64
+          path: JARVIS-macOS-arm64.zip
